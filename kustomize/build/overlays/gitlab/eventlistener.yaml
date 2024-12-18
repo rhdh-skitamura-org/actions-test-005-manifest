@@ -1,0 +1,22 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: actions-test-005-listener
+spec:
+  serviceAccountName: trigger-sa 
+  triggers:
+    - bindings:
+        - ref: actions-test-005-trigger-binding
+      template:
+        ref: actions-test-005-pipeline-template
+      interceptors:
+      - ref:
+          name: gitlab
+          kind: ClusterInterceptor
+        params:
+        - name: "secretRef"
+          value:
+            secretName: gitlab-webhooksecret
+            secretKey: webhook_secret
+        - name: "eventTypes"
+          value: ["Push Hook"]
